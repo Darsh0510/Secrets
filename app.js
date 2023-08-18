@@ -6,6 +6,7 @@ const ejs = require('ejs')
 const connectDB = require('./db/connect')
 const User = require('./models/user')
 const bodyParser = require('body-parser')
+const md5 = require('md5')
 
 
 app.use(bodyParser.urlencoded({extended:true}))
@@ -30,7 +31,7 @@ app.get('/register',(req,res)=>{
 app.post('/register',async (req,res)=>{
     const newUser = new User({
         email: req.body.username,
-        password: req.body.password
+        password: md5(req.body.password) 
     })
 
     await newUser.save().then((doc)=>{
@@ -43,7 +44,7 @@ app.post('/register',async (req,res)=>{
 
 app.post("/login",async (req,res)=>{
     const username = req.body.username
-    const password = req.body.password
+    const password = md5(req.body.password)
 
     const found = await User.findOne({email: username})
     if (!found){
